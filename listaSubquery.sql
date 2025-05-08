@@ -28,19 +28,42 @@ from pre_requisitos pr
 group by cod_disc_pre 
 order by COUNT(cod_disc) desc;
 
--- Questão 4 Incompleta
+-- Questão 4 
 
-select * from disciplinas d 
-where (select MAX(dependentes) 
-		from (select COUNT(cod_disc) dependentes 
-			from pre_requisitos pr group by cod_disc_pre)) = all (
-				select pr.cod_disc_pre, COUNT(cod_disc) dependentes 
-				from pre_requisitos pr group by cod_disc_pre)
+select  pr.cod_disc_pre, COUNT(cod_disc) qtd from pre_requisitos pr 
+group by pr.cod_disc_pre
+order by qtd desc limit 1
+		
+-- Questão 5
+		
+select c.nom_curso , COUNT(a.mat_alu)
+from cursos c full outer join alunos a 
+on c.cod_curso = a.cod_curso 
+group by c.nom_curso; 
+
+-- Questão 6
+
+select a.nom_alu from alunos a where a.mat_alu in (
+	select tm.mat_alu  from turmas_matriculadas tm where tm.turma  in (
+		select t.turma  from turmas t where t.cod_disc in (
+			select d.cod_disc  from disciplinas d where d.qtd_cred > 5)
+			)
+		);
+-- Correção da 6
+
+	select distinct a.mat_alu, a.nom_alu  from turmas_matriculadas tm 
+	inner join alunos a on tm.mat_alu = a.mat_alu
+		where tm.cod_disc in (select d.cod_disc from disciplinas d where d.qtd_cred > 5
+		);
 	
-select MAX(dependentes)
-from (select COUNT(cod_disc) dependentes 
-		from pre_requisitos pr group by cod_disc_pre)
+-- Questão 7
+	
+	select distinct a.mat_alu, a.nom_alu from turmas_matriculadas tm 
+	inner join alunos a on tm.mat_alu = a.mat_alu
+		where tm.turma in (
+			select tm.turma from turmas_matriculadas tm 
+				where 2023 not in (select tm.ano  from turmas_matriculadas tm )
+			)   
+	
 	
 
-	
-	
