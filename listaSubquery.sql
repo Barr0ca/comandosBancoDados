@@ -37,7 +37,7 @@ where (select MAX(dependentes)
 				select pr.cod_disc_pre, COUNT(cod_disc) dependentes 
 				from pre_requisitos pr group by cod_disc_pre)
 	
-select MAX(dependentes) d
+select MAX(dependentes)
 from (select COUNT(cod_disc) dependentes 
 		from pre_requisitos pr group by cod_disc_pre)
 	
