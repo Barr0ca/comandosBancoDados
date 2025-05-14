@@ -28,7 +28,7 @@ from pre_requisitos pr
 group by cod_disc_pre 
 order by COUNT(cod_disc) desc;
 
--- Questão 4 
+-- Questão 4 Incompleta
 
 select  pr.cod_disc_pre, COUNT(cod_disc) qtd from pre_requisitos pr 
 group by pr.cod_disc_pre
@@ -51,19 +51,49 @@ select a.nom_alu from alunos a where a.mat_alu in (
 		);
 -- Correção da 6
 
-	select distinct a.mat_alu, a.nom_alu  from turmas_matriculadas tm 
-	inner join alunos a on tm.mat_alu = a.mat_alu
-		where tm.cod_disc in (select d.cod_disc from disciplinas d where d.qtd_cred > 5
+select distinct a.mat_alu, a.nom_alu  from turmas_matriculadas tm 
+inner join alunos a on tm.mat_alu = a.mat_alu
+	where tm.cod_disc in (select d.cod_disc from disciplinas d where d.qtd_cred > 5
 		);
 	
 -- Questão 7
 	
-	select distinct a.mat_alu, a.nom_alu from turmas_matriculadas tm 
-	inner join alunos a on tm.mat_alu = a.mat_alu
-		where tm.turma in (
-			select tm.turma from turmas_matriculadas tm 
-				where 2023 not in (select tm.ano  from turmas_matriculadas tm )
-			)   
+select distinct a.mat_alu, a.nom_alu from turmas_matriculadas tm 
+inner join alunos a on tm.mat_alu = a.mat_alu
+	where tm.turma in (
+		select tm.turma from turmas_matriculadas tm 
+			where 2023 not in (select tm.ano  from turmas_matriculadas tm )
+			);
+			
+-- Questão 8
+			
+select distinct a.mat_alu, a.nom_alu   from alunos a 
+full outer join historicos_escolares he 
+on a.mat_alu = he.mat_alu
+where he.faltas > 3;
+
+-- Questão 9
+
+select distinct a.mat_alu, a.nom_alu, he.media from alunos a 
+full outer join historicos_escolares he 
+on a.mat_alu = he.mat_alu
+where he.media > 7;
+
+-- Questão 10
+
+select a.mat_alu, a.nom_alu from alunos a 
+where a.mat_alu in (
+	select he.mat_alu from historicos_escolares he  where  he.cod_disc  in (
+		select t.cod_disc from turmas t  where t.cod_prof in (
+			select p.cod_prof  from professores p  where t.cod_prof = 205 )
+		) 
+	);
+
+-- Questão 11
+
+select * from alunos a 
+where a.mat_alu in (
+	select tm.mat_alu from turmas_matriculadas tm where )
 	
 	
 
