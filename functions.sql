@@ -29,6 +29,7 @@ $$ language sql;
 
 select nome_alunos(911094);
 
+
 create or replace function insert_alunos(cod_curso int, dat_nasc date, tot_cred int, 
     mgp numeric, nom_alu text, email text) returns int as
 $$
@@ -36,3 +37,26 @@ $$
     values($1,$2,$3,$4,$5,$6)
     returning mat_alu;
 $$ language sql;
+
+
+create or replace function registar_media_aluno(nome text, n1 int, n2 int, n3 int, n4 int) returns void as
+$$
+	declare
+	  id integer;
+	  media numeric;
+	begin
+		media := (n1+n2+n3+n4)/4;
+		
+		select mat_alu into id from alunos where nom_alu '%' || nom_alu || '%';
+		
+		if not found then
+			raise exception 'Não foi encontrado o(a) aluno %', nome;
+		else
+			update alunos a 
+				set mgp = media
+			where mat_alu = id;
+		end if;
+	end;
+$$ language plpgsql;
+
+select registrar_media_aluno('Benetti', 4, 5, 8, 8);
