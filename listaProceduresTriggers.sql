@@ -35,3 +35,20 @@ call CRUD_Filme(); -- Inserir valores para testar
 
 -- Questão 5
 
+create or replace function atualiza_timestamp() returns trigger as
+$$
+	begin
+		new.ultima_atualizacao := now();
+		return new;
+	end;
+$$ language plpgsql;
+
+create trigger atualiza_timestamp before insert or update on filme
+	for each row execute function atualiza_timestamp();
+
+update filme f 
+	set titulo = 'Velozes demais'
+	where f.filme_id = 14
+	
+select * from filme f
+
