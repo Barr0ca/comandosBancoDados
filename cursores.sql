@@ -1,77 +1,60 @@
-create or replace function refAlunos()
-returns void as
+---------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION refAlunos() RETURNS void AS -- Criando função que declara um cursor BOUND 
 $$
-declare
-	exemplo_cursor_alunos cursor for select * from alunos;
+DECLARE 
+	cursor_alunos CURSOR FOR SELECT * FROM alunos;
 	aluno alunos%rowtype;
-begin
-	open exemplo_cursor_alunos;
-	
-	fetch first from exemplo_cursor_alunos into aluno;
+-- Acima declaração do cursor que retorna a linha em que o cursor está e armazena na variaável 'aluno'
+BEGIN -- Começo da função
+	OPEN cursor_alunos; -- Abre o cursor
+
+	FETCH FIRST FROM cursor_alunos INTO aluno; -- Coloca o cursor no primeiro resultado (FIRST) 
 	raise notice 'Nome: %', aluno.nom_alu;
 	
-	fetch exemplo_cursor_alunos into aluno;
+	FETCH cursor_alunos INTO aluno; -- Coloca o cursor no resultado da sequência (PADRÃO), estava no primeiro foi pro segundo
 	raise notice 'Nome: %', aluno.nom_alu;
-
-	fetch last from exemplo_cursor_alunos into aluno;
+	
+	FETCH LAST FROM cursor_alunos INTO aluno; -- Coloca o cursor no último resultado (LAST)
 	raise notice 'Nome: %', aluno.nom_alu;
+	
+	CLOSE cursor_alunos; -- Fecha o cursor
+END; -- Fim da função
+$$ LANGUAGE plpgsql;
 
-	close exemplo_cursor_alunos;
+SELECT refAlunos(); -- Chamando a função
+
+---------------------------------------------------------------------------------------------------------
+
+create or replace function refalunos2() returns void as 
+$$
+declare 
+	cursor_alunos cursor for select * from alunos; -- Declaração de um cursor BOUND
+begin
+	for aluno in cursor_alunos loop -- Utilizando FOR, IN, LOOP para interar cada linha que for percorrida pelo cursor
+	  raise notice 'Nome: %', aluno.nom_alu;
+	end loop; -- Encerra o loop após o cursor chegar ao final
 end;
 $$ language plpgsql;
+-- Podemos utilizar esse LOOP para fazer alterações, por exemplo, em cada uma das linha individualmente conforme é percorrida
 
-select refAlunos();
+SELECT refalunos2();
 
------------------------------------
+---------------------------------------------------------------------------------------------------------
 
-create or replace function refAlunos2()
-returns void as
+CREATE OR REPLACE FUNCTION refRecuperacao() RETURNS void AS
 $$
-declare
-	exemplo_cursor_alunos cursor for select * from alunos;
+declare 
+	cursor_recuperacao cursor for select distinct mat_alu from historicos_escolares where media < 6;
 begin
-	for aluno in exemplo_cursor_alunos loop
-		raise notice 'Nome: %', aluno.nom_alu;
+	for aluno in cursor_recuperacao loop
+	  raise notice 'Matrícula: %', aluno.mat_alu;
 	end loop;
 end;
-$$ language plpgsql;
+$$ LANGUAGE plpgsql;
 
-select refAlunos2();
+select mat_alu distinct from historicos_escolares where media < 6;
 
------------------------------------
+SELECT refRecuperacao();
 
-create or replace function refReprov()
-returns void as
-$$
-declare
-	cursor_reprov_HE cursor for select distinct he.mat_alu  from historicos_escolares he  where he.media < 6 order by he.mat_alu asc;
-begin
-	for aluno in cursor_reprov_HE loop
-		raise notice 'Matrícula: %', aluno.mat_alu;
-	end loop;
-end;
-$$ language plpgsql;
-
-select refReprov()
-
------------------------------------
-
-create or replace function refReprov()
-returns void as
-$$
-declare
-	cursor_reprov_HE cursor for select distinct he.mat_alu  from historicos_escolares he  where he.media < 6 order by he.mat_alu asc;
-begin
-	for aluno in cursor_reprov_HE loop
-		raise notice 'Matrícula: %', aluno.mat_alu;
-	end loop;
-end;
-$$ language plpgsql;
-
-select refReprov()
-
------------------------------------
-
-select distinct he.mat_alu  from historicos_escolares he  where he.media < 6 order by he.mat_alu asc;
-
-select * from historicos_escolares he; 
+---------------------------------------------------------------------------------------------------------
