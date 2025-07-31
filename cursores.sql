@@ -1,6 +1,6 @@
 -- Dump é uma base de dados individual (backup lógico)
 -- Backup físico e de Wals (Point-in-Time Recovery)
--- Comando pg_dup para realizar o backup Dump; Vai gerar um arquivo .sql com os comandos necessários para reconstrução da base de dados no momento do backup
+-- Comando pg_dump para realizar o backup Dump; Vai gerar um arquivo .sql com os comandos necessários para reconstrução da base de dados no momento do backup
 -- Comando no Linux: pg_dump -f /.../bkp_academico.sql academico
 -- Comando Windows: pg_dump -h localhost -U postgres -f "C:\...\bkp_academico.sql" DBAcademico
 
